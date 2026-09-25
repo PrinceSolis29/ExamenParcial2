@@ -39,3 +39,16 @@ class RecordingNotifier(Notifier):
 
     def notify(self, user_id: int, title: str, message: str) -> None:
         self.sent.append(Notification(user_id=user_id, title=title, message=message))
+        
+class WebhookNotifier(Notifier):
+    def __init__(self) -> None:
+        self.sent_payloads: list[dict] = []
+
+    def notify(self, user_id: int, title: str, message: str) -> None:
+        # Almacena de forma polimórfica los datos en un diccionario dentro de la lista
+        self.sent_payloads.append({
+            "user_id": user_id,
+            "title": title,
+            "message": message
+        })
+        

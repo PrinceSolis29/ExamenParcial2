@@ -4,6 +4,7 @@ from app.domain.errors import (
     PermissionDeniedError,
     TicketNotFoundError,
     ValidationError,
+    DuplicateAssignmentError,
 )
 from app.domain.workflow import assert_transition
 from app.models.assignments import Assignment
@@ -100,8 +101,14 @@ class TicketService:
         actor: User | None = None,
     ) -> Ticket:
         ticket = self.require(ticket_id)
+        
+        # Validación del Ejercicio 3
+        if ticket.assignee_id == technician_id:
+            raise DuplicateAssignmentError("El ticket ya está asignado a este técnico.")
+
         self._ensure_open(ticket)
         technician = self._users.require(technician_id)
+
         if actor is not None and not actor.is_staff:
             raise PermissionDeniedError(
                 "Only staff users can assign tickets",
