@@ -37,6 +37,12 @@ class InMemoryTicketRepository(TicketRepository):
         self._next_id += 1
         return ticket_id
 
+    def count_by_status(self) -> dict[str, int]:
+        report = {}
+        for ticket in self._items.values():
+            status_str = ticket.status.value if hasattr(ticket.status, 'value') else str(ticket.status)
+            report[status_str] = report.get(status_str, 0) + 1
+        return report
 
 class InMemoryUserRepository(UserRepository):
     def __init__(self) -> None:
